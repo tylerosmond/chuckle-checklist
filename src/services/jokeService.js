@@ -1,10 +1,10 @@
 export const getAllJokes = async () => {
-    const response = await fetch("http://localhost:8088/jokes")
-    const jokes = await response.json()
-    return jokes
-}
-
-export const addJokeToDatabase = async (joke) => {
+    const response = await fetch("http://localhost:8088/jokes");
+    const jokes = await response.json();
+    return jokes;
+  };
+  
+  export const addJokeToDatabase = async (joke) => {
     return await fetch('http://localhost:8088/jokes', {
       method: 'POST',
       headers: {
@@ -23,20 +23,22 @@ export const addJokeToDatabase = async (joke) => {
     });
   };
   
-  export const handleSubmit = async (newOneLiner, setNewOneLiner) => {
+  export const handleSubmit = async (newOneLiner) => {
     const jokeObject = {
       text: newOneLiner,
       told: false
     };
   
-   await addJokeToDatabase(jokeObject)
-      .then(() => {
-        setNewOneLiner("");
+    return await addJokeToDatabase(jokeObject)
+      .then(data => {
+        return data;
       })
       .catch((error) => {
         console.error('Failed to add joke:', error);
+        throw error;
       });
   };
+  
 
   export const updateJokeInDatabase = async (joke) => {
     return await fetch(`http://localhost:8088/jokes/${joke.id}`, {
@@ -50,6 +52,25 @@ export const addJokeToDatabase = async (joke) => {
     .then(data => {
       console.log('Success:', data);
       return data;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      throw error;
+    });
+  };
+  
+  export const deleteJokeFromDatabase = async (jokeId) => {
+    return await fetch(`http://localhost:8088/jokes/${jokeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      console.log('Success: Joke deleted');
     })
     .catch((error) => {
       console.error('Error:', error);
